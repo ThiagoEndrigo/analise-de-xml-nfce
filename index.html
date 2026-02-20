@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Verificador de XMLs NFC-e v2.3</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Verificador de XMLs NFC-e v2.3</h1>
+        <p class="subtitle">Processamento de XML NFCE no navegador até 20 mil XML </p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <h3>Arraste e solte seus arquivos XML aqui</h3>
+            <p>ou clique para selecionar</p>
+            <input type="file" id="fileInput" multiple accept=".xml" style="display: none">
+            <button id="selectFilesBtn">Selecionar arquivos</button>
+            <div class="file-info" id="fileInfo">Nenhum arquivo selecionado</div>
+        </div>
+        
+        <div class="config-panel">
+            <h3>⚙️ Processar XMLs</h3>
+            <button id="processarBtn" disabled>▶️ Processar XMLs</button>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <h3>📊 Progresso do Processamento</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-info">
+                <span id="progressPercent">0%</span>
+                <span id="progressCount">0/0 arquivos processados</span>
+            </div>
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+        
+        <div class="results" id="results" style="display: none;">
+            <h2>📊 Resultados da Verificação</h2>
+            
+            <!-- Nome da Empresa será inserido aqui via JavaScript -->
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Arquivos Processados</div>
+                    <div class="stat-value" id="totalProcessado">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Notas Faltantes</div>
+                    <div class="stat-value" id="faltantes">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Notas Duplicadas</div>
+                    <div class="stat-value" id="duplicadas">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Divergências vNF ≠ vPag</div>
+                    <div class="stat-value" id="divergencias">0</div>
+                </div>
+            </div>
+            
+            <div class="protocol-section">
+                <h3>🔐 Protocolo de Autorização</h3>
+                <div class="protocol-stats">
+                    <div class="protocol-item">
+                        <span class="protocol-label">Com protocolo completo:</span>
+                        <span class="protocol-value success" id="comProtocolo">0</span>
+                    </div>
+                    <div class="protocol-item">
+                        <span class="protocol-label">Protocolo incompleto:</span>
+                        <span class="protocol-value warning" id="protocoloIncompleto">0</span>
+                    </div>
+                    <div class="protocol-item">
+                        <span class="protocol-label">Sem protocolo:</span>
+                        <span class="protocol-value error" id="semProtocolo">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="totals-section">
+                <h3>💰 Valores Totais</h3>
+                <div class="total-row">
+                    <span>Soma vNF:</span>
+                    <span id="somaVNF">R$ 0,00</span>
+                </div>
+                <div class="total-row">
+                    <span>Soma vPag:</span>
+                    <span id="somaVPag">R$ 0,00</span>
+                </div>
+                <div class="total-row difference">
+                    <span>Diferença:</span>
+                    <span id="diferenca">R$ 0,00</span>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="semProtocolo">❌ Sem Protocolo</button>
+                <button class="tab-btn" data-tab="protocoloIncompleto">⚠️ Protocolo Incompleto</button>
+                <button class="tab-btn" data-tab="divergencias">⚠️ Divergências</button>
+                <button class="tab-btn" data-tab="faltantes">🔍 Faltantes</button>
+                <button class="tab-btn" data-tab="duplicatas">📋 Duplicadas</button>
+                <button class="tab-btn" data-tab="log">📝 Log</button>
+            </div>
+            
+            <div class="tab-content active" id="tab-semProtocolo">
+                <h4>Notas sem protocolo de autorização</h4>
+                <div class="list-container" id="listaSemProtocolo"></div>
+            </div>
+            
+            <div class="tab-content" id="tab-protocoloIncompleto">
+                <h4>Notas com protocolo incompleto</h4>
+                <div class="list-container" id="listaProtocoloIncompleto"></div>
+            </div>
+            
+            <div class="tab-content" id="tab-divergencias">
+                <h4>Notas com divergência vNF ≠ vPag</h4>
+                <div class="list-container" id="listaDivergencias"></div>
+            </div>
+            
+            <div class="tab-content" id="tab-faltantes">
+                <h4>Números faltantes</h4>
+                <div class="list-container" id="listaFaltantes"></div>
+            </div>
+            
+            <div class="tab-content" id="tab-duplicatas">
+                <h4>Notas duplicadas</h4>
+                <div class="list-container" id="listaDuplicatas"></div>
+            </div>
+            
+            <div class="tab-content" id="tab-log">
+                <h4>Log de processamento</h4>
+                <div class="list-container" id="listaLog"></div>
+            </div>
+            
+            <button class="export-btn" id="exportBtn">📥 Exportar Relatório</button>
+            
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
