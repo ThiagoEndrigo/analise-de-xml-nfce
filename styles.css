@@ -797,6 +797,27 @@ h1 {
     background: #4d4d6a;
 }
 
+/* === NOVO: Crédito do Desenvolvedor === */
+.developer-credit {
+    margin-top: 48px;
+    padding-top: 24px;
+    text-align: center;
+    font-size: 0.85em;
+    color: #4f5b73;
+    border-top: 1px solid #2d2d44;
+}
+
+.developer-credit a {
+    color: #6d7b9c;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.developer-credit a:hover {
+    color: #4a9eff;
+    text-decoration: underline;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .container {
